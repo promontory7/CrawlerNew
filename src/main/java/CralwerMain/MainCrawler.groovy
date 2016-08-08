@@ -1,7 +1,8 @@
-package CralwerMain
+package cralwerMain
 
-import PagePrecessor.CailianPageProcessor
+import pageProcessor.CailianPageProcessor
+import pageProcessor.base.BasePageProcessor
 import us.codecraft.webmagic.Spider
 
 
-Spider.create(new CailianPageProcessor()).thread(5).addUrl('http://webmagic.io/docs/zh/').run()
+Spider.create(new CailianPageProcessor()).thread(5).addUrl(BasePageProcessor.defaultUrl).run()

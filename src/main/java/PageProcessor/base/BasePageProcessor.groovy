@@ -1,5 +1,8 @@
-package PagePrecessor.base
+package pageProcessor.base
 
+import bean.Project
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import us.codecraft.webmagic.Page
 import us.codecraft.webmagic.Site
 import us.codecraft.webmagic.processor.PageProcessor
@@ -7,8 +10,11 @@ import us.codecraft.webmagic.processor.PageProcessor
 /**
  * 处理基础类
  */
-abstract class BasePageProcwssor implements PageProcessor {
-    String defaultUrl = 'http://webmagic.io/docs/zh/'
+abstract class BasePageProcessor implements PageProcessor {
+    Document document
+    Project project =new Project()
+
+    static String defaultUrl = 'https://www.baidu.com'
     String listUrl      //列表页
     String detailUrl    //详情页
 
@@ -19,6 +25,8 @@ abstract class BasePageProcwssor implements PageProcessor {
 
     @Override
     void process(Page page) {
+        document = Jsoup.parse(page.getHtml().toString());
+
         //初始URL，添加所有列表url
         if (page.getUrl().toString().trim() == defaultUrl) {
             (baseUrl, pageStart, pageEnd) = setBaseUrlAndSum()

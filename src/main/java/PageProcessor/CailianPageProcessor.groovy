@@ -5,8 +5,6 @@ import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import pageProcessor.base.BasePageProcessor
 
-import java.util.regex.Pattern
-
 /**
  * 采联采购
  */

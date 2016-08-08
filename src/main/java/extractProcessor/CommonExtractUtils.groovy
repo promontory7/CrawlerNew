@@ -2,6 +2,8 @@ package extractProcessor
 
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
+import java.util.regex.Matcher
+import java.util.regex.Pattern
 
 /**
  * 移除String中的特殊字符
@@ -16,6 +18,37 @@ static def removeSymbolFromString(String str, def ... symbols) {
         }
     }
     return str
+}
+
+/**
+ * 从整篇内容中找到匹配行
+ * @param raw
+ * @param regEx
+ * @return
+ */
+static def getLineFromStringWithRegex(String raw,String regEx){
+    BufferedReader reader=new BufferedReader(new StringReader(raw))
+    ArrayList<String> arrayList =new ArrayList<String>()
+    String line
+    while ((line=reader.readLine())!=null){
+        if (line=~regEx){
+            arrayList.add(line)
+        }
+    }
+    return arrayList
+
+}
+
+static  def getValueFromStringWithRegex(String raw,String regEx){
+    def matcher = raw=~regEx
+    if (matcher){
+        if (matcher.size()==1){
+            return matcher[0]
+        }
+        else {
+           return matcher
+        }
+    }
 }
 
 /**

@@ -26,29 +26,38 @@ static def removeSymbolFromString(String str, def ... symbols) {
  * @param regEx
  * @return
  */
-static def getLineFromStringWithRegex(String raw,String regEx){
-    BufferedReader reader=new BufferedReader(new StringReader(raw))
-    ArrayList<String> arrayList =new ArrayList<String>()
+static def getLineFromStringWithRegex(String raw, String regEx) {
+    BufferedReader reader = new BufferedReader(new StringReader(raw))
+    ArrayList<String> arrayList = new ArrayList<String>()
     String line
-    while ((line=reader.readLine())!=null){
-        if (line=~regEx){
+    while ((line = reader.readLine()) != null) {
+        if (line =~ regEx) {
             arrayList.add(line)
         }
     }
     return arrayList
 
 }
-
-static  def getValueFromStringWithRegex(String raw,String regEx){
-    def matcher = raw=~regEx
-    if (matcher){
-        if (matcher.size()==1){
+/**
+ * 从 String 中 获得匹配的数据
+ * @param raw
+ * @param regEx
+ * @return
+ */
+static def getValueFromStringWithRegex(String raw, String regEx) {
+    def matcher = (raw =~ regEx)
+    if (matcher) {
+        if (matcher.size() == 1) {
             return matcher[0]
-        }
-        else {
-           return matcher
+        } else {
+            return matcher
         }
     }
+}
+
+
+static def getProjectNoFromString(String raw) {
+    return getValueFromStringWithRegex(raw, '[a-zA-Z0-9]{9,}')
 }
 
 /**

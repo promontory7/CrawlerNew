@@ -12,7 +12,7 @@ import us.codecraft.webmagic.processor.PageProcessor
  */
 abstract class BasePageProcessor implements PageProcessor {
     Document document
-    Project project =new Project()
+    Project project = new Project()
 
     static String defaultUrl = 'https://www.baidu.com'
     String listUrl      //列表页
@@ -39,10 +39,10 @@ abstract class BasePageProcessor implements PageProcessor {
             }
         } else if (page.getUrl().regex(listUrl).match()) {
             //列表页处理
-            listPrecess()
+            listPrecess(page)
         } else if (page.getUrl().regex(detailUrl).match()) {
             //详情页处理
-            detailProcess()
+            detailProcess(page)
         } else {
             println "无法处理网址类型  url $page.url"
         }
@@ -70,10 +70,19 @@ abstract class BasePageProcessor implements PageProcessor {
     /**
      * 列表页处理
      */
-    abstract def listPrecess()
+    abstract def listPrecess(Page page)
 
     /**
      * 详情页处理
      */
-    abstract def detailProcess()
+    abstract def detailProcess(Page page)
+
+
+    /**
+     * 解析提取字段信息
+     * @param content 详情页面内容（有空行符）
+     * @return
+     */
+    abstract def parseContent(String content)
+
 }

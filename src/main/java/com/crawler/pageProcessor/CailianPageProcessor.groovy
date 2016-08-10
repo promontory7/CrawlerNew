@@ -4,6 +4,7 @@ import com.crawler.MyUtils.CacheUncomplateMap
 import com.crawler.MyUtils.CompleteUrlFromDB
 import com.crawler.MyUtils.HibernateUtil
 import com.crawler.MyUtils.Utils
+import com.crawler.bean.Project
 import com.crawler.extractProcessor.CommonExtractUtils
 import com.crawler.pageProcessor.base.BasePageProcessor
 import org.jsoup.nodes.Element
@@ -17,7 +18,7 @@ class CailianPageProcessor extends BasePageProcessor {
 
     @Override
     def setBaseUrlAndSum() {
-        ['http://www.chinapsp.cn/xinxigonggao/list.php?catid=74166&page=' + pageNumSymbol, 1, 1]
+        ['http://www.chinapsp.cn/xinxigonggao/list.php?catid=74166&page=' + pageNumSymbol, 1, 20]
     }
 
     @Override
@@ -29,6 +30,7 @@ class CailianPageProcessor extends BasePageProcessor {
 
     @Override
     def listPrecess(Page page) {
+
 
         //城市字段由js动态生成，此处先把js源码解析出id和城市后写入map，然后获取所属城市
         LinkedHashMap id2city = new LinkedHashMap()
@@ -45,9 +47,9 @@ class CailianPageProcessor extends BasePageProcessor {
                 for (Element li : ul.select('li')) {
                     Elements span = li.children()
                     if (span.size() == 4) {
-
+                        Project project=new Project()
                         String cityID = CommonExtractUtils.getValueFromStringWithRegex(span.get(0).toString(), "\\d{3}")
-                        project.websiteType = id2city.get(cityID)
+                        project.websiteType = id2city.get(cityID)+'市'
 
                         project.tenDerWay = CommonExtractUtils.removeSymbolFromString(span.get(1).text(), "【", "】")
                         project.url = span.get(2).attr("href").trim()
@@ -66,27 +68,41 @@ class CailianPageProcessor extends BasePageProcessor {
 
     @Override
     def detailProcess(Page page) {
-        project = CacheUncomplateMap.instance.getFromMap(page.getUrl().toString().trim())
-
+       Project  project = CacheUncomplateMap.instance.getFromMap(page.getUrl().toString().trim())
 
         def div = document.getElementById('content')
         if (div) {
-//            project.rawHtml = div.toString()
+            project.rawHtml = div.toString()
 
             StringBuffer content = new StringBuffer()
-            for (Element p : div.children()) {
+            if (div.children()){
+                for (Element p : div.children()) {
+                    if (p.nodeName()=='div'){
+                        if (p.childNodeSize()>8){
+                            for (Element p2:p.children()){
+                                content.append(p2.text()).append('\n')
+                            }
+                        }else {
+                            content.append(p.text()).append('\n')
+                        }
 
-                content.append(p.text()).append('\n')
+                    }else {
+                        content.append(p.text()).append('\n')
+                    }
+                }
             }
-            parseContent(content.toString())
+
+            project.attach=content.toString()
+            parseContent(content.toString(),project)
         } else {
             println '内容失踪了...'
         }
+
        HibernateUtil.save2Hibernate(project)
     }
 
     @Override
-    def parseContent(String content) {
+    def parseContent(String content,Project project) {
 
         BufferedReader bufferedReader = new BufferedReader(new StringReader(content))
         String line
@@ -101,11 +117,11 @@ class CailianPageProcessor extends BasePageProcessor {
             }
             if (line.contains('联合体投标')) {
                 if (line.contains('不')) {
-                    project.isAcceptUnion = false
+                    project.isAcceptUnion = '否'
                 }
 
             }
-            if ((line.contains('采购单位：') || line.contains('招标人名称：'))) {
+            if ((line.contains('采购单位：') || line.contains('招标人名称：')||line.contains('采购人名称'))) {
                     project.owners = Utils.splitStringAndGet(line, '：', 1)
             }
             if (line.contains('招标代理机构：') || line.contains('采购代理机构：')) {
@@ -148,6 +164,9 @@ class CailianPageProcessor extends BasePageProcessor {
                     }
                 }
 
+            }
+            if (line.contains('地址')) {
+                project.projectAddress = Utils.splitStringAndGet(line, '：', 1)
             }
         }
         project.time = Utils.currentTime

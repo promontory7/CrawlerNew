@@ -47,15 +47,17 @@ static def getValueFromStringWithRegex(String raw, String regEx) {
     if (matcher) {
         if (matcher.size() == 1) {
             return matcher[0]
-        } else {
+        } else if (matcher.size() >1){
             return matcher
+        }else {
+            return null
         }
     }
 }
 
 
 static def getProjectNoFromString(String raw) {
-    return getValueFromStringWithRegex(raw, '[a-zA-Z0-9]{9,}')
+    return getValueFromStringWithRegex(raw, '[a-zA-Z0-9-]{9,}')
 }
 
 /**

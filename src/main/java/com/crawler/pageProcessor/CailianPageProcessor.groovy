@@ -68,7 +68,7 @@ class CailianPageProcessor extends BasePageProcessor {
 
     @Override
     def detailProcess(Page page) {
-       Project  project = CacheUncomplateMap.instance.getFromMap(page.getUrl().toString().trim())
+         project = CacheUncomplateMap.instance.getFromMap(page.getUrl().toString().trim())
 
         def div = document.getElementById('content')
         if (div) {
@@ -93,7 +93,7 @@ class CailianPageProcessor extends BasePageProcessor {
             }
 
             project.attach=content.toString()
-            parseContent(content.toString(),project)
+            parseContent(content.toString())
         } else {
             println '内容失踪了...'
         }
@@ -102,7 +102,7 @@ class CailianPageProcessor extends BasePageProcessor {
     }
 
     @Override
-    def parseContent(String content,Project project) {
+    def parseContent(String content) {
 
         BufferedReader bufferedReader = new BufferedReader(new StringReader(content))
         String line

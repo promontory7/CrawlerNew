@@ -12,7 +12,7 @@ import us.codecraft.webmagic.processor.PageProcessor
  */
 abstract class BasePageProcessor implements PageProcessor {
     Document document
-
+    Project project
 
     static String defaultUrl = 'https://www.baidu.com'
     String listUrl      //列表页
@@ -84,6 +84,6 @@ abstract class BasePageProcessor implements PageProcessor {
      * @param content 详情页面内容（有空行符）
      * @return
      */
-    abstract def parseContent(String content,Project project)
+    abstract def parseContent(String content)
 
 }

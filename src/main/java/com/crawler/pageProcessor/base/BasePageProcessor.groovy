@@ -30,12 +30,14 @@ abstract class BasePageProcessor implements PageProcessor {
 
         //初始URL，添加所有列表url
         if (page.getUrl().toString().trim() == defaultUrl) {
-            (baseUrl, pageStart, pageEnd) = setBaseUrlAndSum()
             (listUrl, detailUrl) = setTypeOfUrl()
 
-            if (baseUrl && pageStart && pageEnd) {
-                pageStart.upto(pageEnd) {
-                    page.addTargetRequest(baseUrl.replace(pageNumSymbol, it + ""))
+            setBaseUrlAndSum().each {
+                (baseUrl, pageStart, pageEnd) = it
+                if (baseUrl && pageStart && pageEnd) {
+                    pageStart.upto(pageEnd) {
+                        page.addTargetRequest(baseUrl.replace(pageNumSymbol, it + ""))
+                    }
                 }
             }
         } else if (page.getUrl().regex(listUrl).match()) {
@@ -77,7 +79,6 @@ abstract class BasePageProcessor implements PageProcessor {
      * 详情页处理
      */
     abstract def detailProcess(Page page)
-
 
     /**
      * 解析提取字段信息

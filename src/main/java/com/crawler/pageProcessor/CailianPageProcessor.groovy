@@ -18,7 +18,7 @@ class CailianPageProcessor extends BasePageProcessor {
 
     @Override
     def setBaseUrlAndSum() {
-        ['http://www.chinapsp.cn/xinxigonggao/list.php?catid=74166&page=' + pageNumSymbol, 1, 20]
+        [['http://www.chinapsp.cn/xinxigonggao/list.php?catid=74166&page=' + pageNumSymbol, 1, 20]]
     }
 
     @Override
